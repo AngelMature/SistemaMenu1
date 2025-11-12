@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using CapaDatos;
 using CapaNegocio;
@@ -26,76 +21,54 @@ namespace CapaPresentancion
         {
             InitializeComponent();
             CrearCamposEntrada();
-            CargarProductos(); // ← AQUÍ ESTÁ INTEGRADO
+            CargarProductos();
             MostrarCamposPlatillos();
         }
 
         private void CrearCamposEntrada()
         {
-            // Crear TextBox para Nombre
-            txtNombreInput = new TextBox();
-            txtNombreInput.Location = new Point(436, 350);
-            txtNombreInput.Size = new Size(150, 25);
-            this.Controls.Add(txtNombreInput);
+            txtCategoriaInput = new TextBox { Location = new Point(140, 380), Size = new Size(150, 25) };
+            Controls.Add(txtCategoriaInput);
 
-            // Crear TextBox para Precio
-            txtPrecioInput = new TextBox();
-            txtPrecioInput.Location = new Point(630, 350);
-            txtPrecioInput.Size = new Size(100, 25);
-            this.Controls.Add(txtPrecioInput);
+            txtNombreInput = new TextBox { Location = new Point(140, 410), Size = new Size(150, 25) };
+            Controls.Add(txtNombreInput);
 
-            // Crear TextBox para Descripción
-            txtDescripcionInput = new TextBox();
-            txtDescripcionInput.Location = new Point(679, 300);
-            txtDescripcionInput.Size = new Size(200, 25);
-            this.Controls.Add(txtDescripcionInput);
+            txtPrecioInput = new TextBox { Location = new Point(140, 440), Size = new Size(150, 25) };
+            Controls.Add(txtPrecioInput);
 
-            // Crear TextBox para Categoría
-            txtCategoriaInput = new TextBox();
-            txtCategoriaInput.Location = new Point(553, 320);
-            txtCategoriaInput.Size = new Size(120, 25);
-            this.Controls.Add(txtCategoriaInput);
+            txtDescripcionInput = new TextBox { Location = new Point(570, 380), Size = new Size(150, 25) };
+            Controls.Add(txtDescripcionInput);
 
-            // Crear TextBox para Tiempo Preparación
-            txtTiempoPreparacionInput = new TextBox();
-            txtTiempoPreparacionInput.Location = new Point(460, 425);
-            txtTiempoPreparacionInput.Size = new Size(120, 25);
-            this.Controls.Add(txtTiempoPreparacionInput);
+            txtTiempoPreparacionInput = new TextBox { Location = new Point(610, 410), Size = new Size(100, 25) };
+            Controls.Add(txtTiempoPreparacionInput);
 
-            // Crear TextBox para Tamaño
-            txtTamanoInput = new TextBox();
-            txtTamanoInput.Location = new Point(46, 400);
-            txtTamanoInput.Size = new Size(120, 25);
-            this.Controls.Add(txtTamanoInput);
+            txtTamanoInput = new TextBox { Location = new Point(570, 440), Size = new Size(50, 25) };
+            Controls.Add(txtTamanoInput);
         }
 
-        // AQUÍ ESTÁ EL MÉTODO CargarProductos INTEGRADO
         private void CargarProductos()
         {
             try
             {
                 DataTable dt = productoDAO.ObtenerTodos();
-
                 if (dt == null || dt.Rows.Count == 0)
                 {
                     lblMensaje.Text = "No hay productos registrados";
                     dataGridView1.DataSource = null;
                     return;
                 }
-
                 dataGridView1.DataSource = dt;
                 lblMensaje.Text = $"Se cargaron {dt.Rows.Count} productos";
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al cargar productos: {ex.Message}", "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Error al cargar productos: {ex.Message}");
             }
         }
 
         private void radioButton2_CheckedChanged(object sender, EventArgs e)
         {
-            if (radioButton2.Checked)
+            if (radioButtonPlatillos.Checked)
             {
                 MostrarCamposPlatillos();
                 CargarPlatillos();
@@ -104,7 +77,7 @@ namespace CapaPresentancion
 
         private void radioButton3_CheckedChanged(object sender, EventArgs e)
         {
-            if (radioButton3.Checked)
+            if (radioButtonBebidas.Checked)
             {
                 MostrarCamposBebidas();
                 CargarBebidas();
@@ -113,141 +86,71 @@ namespace CapaPresentancion
 
         private void MostrarCamposPlatillos()
         {
-            txtTiempoPreparacion.Visible = true;
+            lblTiempoPreparacion.Visible = true;
             txtTiempoPreparacionInput.Visible = true;
-            txtTamano.Visible = false;
+            lblTamano.Visible = false;
             txtTamanoInput.Visible = false;
             chkAlcoholica.Visible = false;
         }
 
         private void MostrarCamposBebidas()
         {
-            txtTiempoPreparacion.Visible = false;
+            lblTiempoPreparacion.Visible = false;
             txtTiempoPreparacionInput.Visible = false;
-            txtTamano.Visible = true;
+            lblTamano.Visible = true;
             txtTamanoInput.Visible = true;
             chkAlcoholica.Visible = true;
         }
 
         private void CargarPlatillos()
         {
-            try
-            {
-                DataTable dt = productoDAO.ObtenerPlatillos();
-                dataGridView1.DataSource = dt;
-                lblMensaje.Text = $"Se cargaron {dt.Rows.Count} platillos";
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error al cargar platillos: {ex.Message}", "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            dataGridView1.DataSource = productoDAO.ObtenerPlatillos();
+            lblMensaje.Text = $"Se cargaron {dataGridView1.Rows.Count} platillos";
         }
 
         private void CargarBebidas()
         {
-            try
-            {
-                DataTable dt = productoDAO.ObtenerBebidas();
-                dataGridView1.DataSource = dt;
-                lblMensaje.Text = $"Se cargaron {dt.Rows.Count} bebidas";
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error al cargar bebidas: {ex.Message}", "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            dataGridView1.DataSource = productoDAO.ObtenerBebidas();
+            lblMensaje.Text = $"Se cargaron {dataGridView1.Rows.Count} bebidas";
         }
 
         private void btnAgregar_Click(object sender, EventArgs e)
         {
-            try
+            if (string.IsNullOrWhiteSpace(txtNombreInput.Text)) { MessageBox.Show("El nombre es requerido"); return; }
+            if (!decimal.TryParse(txtPrecioInput.Text, out decimal precio) || precio <= 0) { MessageBox.Show("El precio debe ser mayor a 0"); return; }
+
+            string tipo = radioButtonPlatillos.Checked ? "Platillo" : "Bebida";
+            bool resultado = productoDAO.Insertar(txtNombreInput.Text, tipo, precio,
+                txtDescripcionInput.Text, txtCategoriaInput.Text);
+
+            if (resultado)
             {
-                // Validaciones
-                if (string.IsNullOrWhiteSpace(txtNombreInput.Text))
-                {
-                    MessageBox.Show("El nombre es requerido", "Validación",
-                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
-
-                if (!decimal.TryParse(txtPrecioInput.Text, out decimal precio) || precio <= 0)
-                {
-                    MessageBox.Show("El precio debe ser un número mayor a 0", "Validación",
-                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
-
-                string tipo = radioButton2.Checked ? "Platillo" : "Bebida";
-                string descripcion = txtDescripcionInput.Text;
-                string categoria = txtCategoriaInput.Text;
-
-                bool resultado = productoDAO.Insertar(
-                    txtNombreInput.Text,
-                    tipo,
-                    precio,
-                    descripcion,
-                    categoria
-                );
-
-                if (resultado)
-                {
-                    MessageBox.Show("Producto agregado correctamente", "Éxito",
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    LimpiarCampos();
-
-                    // Recargar la lista según el tipo seleccionado
-                    if (radioButton2.Checked) CargarPlatillos();
-                    else CargarBebidas();
-                }
-                else
-                {
-                    MessageBox.Show("Error al agregar el producto", "Error",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
+                MessageBox.Show("Producto agregado correctamente");
+                LimpiarCampos();
+                if (radioButtonPlatillos.Checked) CargarPlatillos();
+                else CargarBebidas();
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error: {ex.Message}", "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            else MessageBox.Show("Error al agregar el producto");
         }
 
-        private void btnLimpiar_Click(object sender, EventArgs e)
-        {
-            LimpiarCampos();
-        }
+        private void btnLimpiar_Click(object sender, EventArgs e) => LimpiarCampos();
 
         private void LimpiarCampos()
         {
+            txtCategoriaInput.Clear();
             txtNombreInput.Clear();
             txtPrecioInput.Clear();
             txtDescripcionInput.Clear();
-            txtCategoriaInput.Clear();
             txtTiempoPreparacionInput.Clear();
             txtTamanoInput.Clear();
             chkAlcoholica.Checked = false;
             lblMensaje.Text = "Campos limpiados";
         }
 
-        private void btnRegresar_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
+        private void btnRegresar_Click(object sender, EventArgs e) => Close();
 
-        // Métodos que no necesitan funcionalidad (pueden quedar vacíos)
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e) { }
-        private void txtTamano_Click(object sender, EventArgs e) { }
         private void chkAlcoholica_CheckedChanged(object sender, EventArgs e) { }
-        private void txtNombre_Click(object sender, EventArgs e) { }
-        private void txtDescripcion_Click(object sender, EventArgs e) { }
-        private void txtCategoria_Click(object sender, EventArgs e) { }
-        private void txtTiempoPreparacion_Click(object sender, EventArgs e) { }
-        private void label2_Click(object sender, EventArgs e) { }
-
-        private void frmMenu_Load(object sender, EventArgs e)
-        {
-
-        }
+        private void frmMenu_Load(object sender, EventArgs e) { }
     }
 }
